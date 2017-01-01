@@ -25,40 +25,40 @@ alias p "ping -c 3 www.google.com"
 
 alias pacman 'pacman --color always'
 
-function ∮pacco
+function ∮pacco -d "get pacman package for function"
 	pacman -Qo (which $argv) | \
 	sed 's/^.*is owned by[[:space:]]*\([[:graph:]]*\).*/\1/'
 end
 
-function ∮pacci
+function ∮pacci -d "get pacman information for function"
 	pacman -Qi (∮pacco $argv)
 end
 
-function ∮paci
+function ∮paci -d "get pacman information for package"
 	pacman -Qi $argv
 end
 
-function ∮pace
+function ∮pace -d "list packages explicitly installed"
 	pacman -Qe
 end
 
-function ∮pacg
+function ∮pacg -d "list package groups"
 	pacman -Qg       | \
 	awk '{print $1}' | \
 	sort -u
 end
 
-function ∮pacgi
-	pacman -Qi (pacman -Rscp $argv | \
+function ∮pacgi -d "get verbose information for group"
+	pacman -Qi --color never (pacman -Rscp $argv | \
 	sed 's/[.:_-][0-9].*$//')
 end
 
-function ∮pacgis
+function ∮pacgis -d "get short information for group"
 	∮pacgi $argv | \
 	grep "^Name\|^Installed Size\|^Description"
 end
 
-function ∮pacng
+function ∮pacng -d "get information for explicitly installed things"
 	pacman -Qi --color never (pacman -Qeq --color never) | \
 	sed -n '/Name\|Groups\|Description/ s/^.*: // p'     | \
 	paste -sd ',,\n'                                     | \
@@ -75,37 +75,37 @@ end
 #	sed -n 's/^None,//p'
 #end
 
-function ∮paco
+function ∮paco -d "get package owner of file"
 	pacman -Qo $argv
 end
 
-function ∮twit
-	ttytter -ansi -daemon -hold
-	∮wait
-end
+#function ∮twit -d "command line twitter client"
+#	ttytter -ansi -daemon -hold
+#	∮wait
+#end
 
 #navigation functions
 
-function cl
+function cl -d "change directory and list contents"
 	cd $argv
 	la
 end
 
 #git functions
 
-function ∮gitd
+function ∮gitd -d "get diff of listed files"
 	git diff (git status --porcelain | sed -n '/'$argv[1]'/ {s/^ [A-Z] //p; q}')
 end
 
-function ∮gits
+function ∮gits -d "get git status"
 	git status $argv
 end
 
-function ∮gitss
+function ∮gitss -d "get short git status"
 	git status --short $argv
 end
 
-function ∮giti
+function ∮giti -d "hard to say"
 	git diff-tree --no-commit-id --name-only -r $argv
 end
 
@@ -113,7 +113,7 @@ end
 
 alias e "emacsclient -n"
 
-function ∮E
+function ∮E -d "use existing emacs instance to edit write-protected file"
 	begin
 		set -lx EDITOR "emacsclient"
 		sudo -e $argv
@@ -122,27 +122,27 @@ end
 
 #utility
 
-function ∮fuck
+function ∮fuck -d "automatically fix previous command"
 	thefuck (history | head -n 1)
 end
 
-function ∮wait
+function ∮wait -d "wait for 1 second"
 	while true
 		sleep 1000
 	end
 end
 
-function ∮fresh
+function ∮fresh -d "freshen the fish"
 	. ~/.config/fish/config.fish
 end
 
 #docker
 
-function ∮dockex
+function ∮dockex -d "execute given docker"
 	docker exec -it $argv /bin/bash
 end
 
-function parse
+function parse -d "provide default value for bash variable"
 	if test -z $argv[1]
 		if test -z $argv[2]
 			return 1
@@ -154,7 +154,7 @@ function parse
 	end
 end
 
-function ∮dock
+function ∮dock -d "kill existing dockers, delete their images, and re run"
 	set name (parse $argv[1] app)
 	set dir (parse $argv[2] .)
 	set port (parse $argv[3] 8081)
@@ -170,7 +170,7 @@ function ∮dock
 	and eval $cmd
 end
 
-function ∮describe
+function ∮describe -d "list functions in fish file"
 	sed -n '
 	/^function/ {
 	  s/^function\s*\(.*\){/\1/;
@@ -184,7 +184,7 @@ function ∮describe
 	}' $argv
 end
 
-function ∮funclist
+function ∮funclist -d "list functions in fish file"
 	sed '
 	/^$/ d
 	/\/\*/,/\*\// d
@@ -193,11 +193,11 @@ function ∮funclist
 	' $argv
 end
 
-function ∮prefix
+function ∮prefix -d "hard to say"
 	echo $argv[2] | grep '^'$argv[1] >/dev/null ^/dev/null
 end
 
-function ∮push
+function ∮push -d "push notification to phone"
 	curl -s                                               \
 	--form-string  "token=atNQrB8CHDfRzbTa5DmpeYybWkXeHL" \
 	--form-string  "user=ud1BAyr2T49wC58iK53hHTsfdd5omw"  \
@@ -205,7 +205,7 @@ function ∮push
 	https://api.pushover.net/1/messages.json
 end
 
-function ∮map
+function ∮map -d "create docker file mapping"
 	set h $argv[1]
 	set t $argv[2]
 	set r ''
